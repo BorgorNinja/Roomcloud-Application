@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomCloud Dashboard</title>
+    <link rel="stylesheet" href="styles_dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="asset_logo.png" alt="RoomCloud Logo">
+                <span>Room|Cloud</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#"><i class="icon-dashboard"></i>My Dashboard</a></li>
+                    <li><a href="#"><i class="icon-profile"></i>Student Profile</a></li>
+                    <li><a href="#"><i class="icon-files"></i>Files</a></li>
+                    <li><a href="#"><i class="icon-status"></i>Status</a></li>
+                    <li><a href="#"><i class="icon-logout"></i>Log out</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main>
+            <header>
+                <h1>Dashboard</h1>
+                <div class="user-info">
+                    <input type="text" placeholder="Search">
+                    <button>Upload File</button>
+                    <div class="user-profile">
+                        <img src="profile_picture.png" alt="User Picture">
+                        <span>Alice</span>
+                    </div>
+                </div>
+            </header>
+            <section class="welcome-section">
+                <h2>Welcome Back, Alice Leal Guo!</h2>
+                <p>Check and Update your dashboard!!</p>
+            </section>
+            <section class="status-section">
+                <div class="status-card all">
+                    <h3>All</h3>
+                    <p>Upload Today (5 Files)</p>
+                </div>
+                <div class="status-card pending">
+                    <h3>Pending</h3>
+                    <p>Upload Today (10 Files)</p>
+                </div>
+                <div class="status-card approved">
+                    <h3>Approved</h3>
+                    <p>Upload Today (14 Files)</p>
+                </div>
+            </section>
+            <section class="files-section">
+                <h3>Recent Files</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>File001</td>
+                            <td>.pdf</td>
+                            <td>2.5MB</td>
+                            <td>Nov 24, 2019</td>
+                            <td><button>View</button></td>
+                        </tr>
+                        <tr>
+                            <td>File002</td>
+                            <td>.pdf</td>
+                            <td>1.5MB</td>
+                            <td>Dec 15, 2020</td>
+                            <td><button>View</button></td>
+                        </tr>
+                        <tr>
+                            <td>File003</td>
+                            <td>.pdf</td>
+                            <td>3.4MB</td>
+                            <td>Aug 15, 2017</td>
+                            <td><button>View</button></td>
+                        </tr>
+                        <tr>
+                            <td>File004</td>
+                            <td>.pdf</td>
+                            <td>3.5MB</td>
+                            <td>June 9, 2022</td>
+                            <td><button>View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+        <aside class="right-sidebar">
+            <div class="calendar">
+                <h3>Calendar</h3>
+                <div class="calendar-view">
+                    <!-- Calendar view can be implemented later -->
+                </div>
+            </div>
+            <div class="feedback">
+                <h3>Feedbacks:</h3>
+                <div class="feedback-list">
+                    <!-- Feedback list can be implemented later -->
+                </div>
+            </div>
+            <footer>
+                <p>All rights reserved© 2024</p>
+            </footer>
+        </aside>
+    </div>
+</body>
+</html>

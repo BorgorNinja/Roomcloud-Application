@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+    <div class="container">
+        <a href="#" class="login-link">Already have an account? <span>Login</span></a>
+        <a href="#" class="create-account-button">Create account</a>
+        <div class="form-container">
+            <form action="register.php" method="POST">
+                <div class="logo">
+                    <img src="asset_logo.png" alt="Logo">
+                </div>
+                <h2>ROOM | Cloud</h2>
+                <div class="form-section">
+                    <h3>Student Information</h3>
+                    <label>First name</label>
+                    <input type="text" name="first_name" required>
+                    <label>Middle name</label>
+                    <input type="text" name="middle_name">
+                    <label><input type="checkbox" name="no_middle_name"> No middle name</label>
+                    <label>Last name</label>
+                    <input type="text" name="last_name" required>
+                    <label>Suffix</label>
+                    <input type="text" name="suffix">
+                    <label><input type="checkbox" name="no_suffix"> No suffix</label>
+                    <label>Student number</label>
+                    <input type="text" name="student_number" required>
+                    <label>Select course</label>
+                    <select name="course" required>
+                        <option value="Course 1">Course 1</option>
+                        <option value="Course 2">Course 2</option>
+                    </select>
+                    <label>Section</label>
+                    <input type="text" name="section" required>
+                </div>
+                <div class="form-section">
+                    <h3>Contact Information</h3>
+                    <label>Enter your email</label>
+                    <input type="email" name="email" required>
+                    <label>Contact number</label>
+                    <input type="text" name="contact_number" required>
+                </div>
+                <div class="form-section">
+                    <h3>Account Information</h3>
+                    <label>Enter new password</label>
+                    <input type="password" name="new_password" required>
+                    <label>Confirm new password</label>
+                    <input type="password" name="confirm_password" required>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

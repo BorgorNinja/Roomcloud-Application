@@ -1,0 +1,17 @@
+body {
+    background-image: url("winxp.jpg");
+    background-size: 100%;
+}
+
+.leftside {
+    background-color: antiquewhite;
+    float: left;
+    width: 30%;
+}
+
+.rightside {
+    background-color: aquamarine;
+    float: right;
+    width: 30%;
+
+}

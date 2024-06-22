@@ -1,0 +1,48 @@
+
+.background { 
+    
+/* Student Log-In - 1 */
+
+position: relative;
+width: 1440px;
+height: 1024px;
+
+background: #135D66;
+
+}
+
+.roundbox {
+    /* Student Log-In - 1 */
+
+position: relative;
+width: 1440px;
+height: 1024px;
+
+background: #135D66;
+
+}
+
+
+.inputbox {
+    /* Email TextField */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 4px;
+gap: 10px;
+
+position: absolute;
+width: 395px;
+height: 50px;
+left: 857px;
+top: 409px;
+
+background: #FFFFFF;
+border: 1px solid #003C43;
+border-radius: 4px;
+
+}

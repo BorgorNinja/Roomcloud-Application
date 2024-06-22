@@ -1,0 +1,197 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2b6e6e;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo span {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar nav ul li {
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.sidebar nav ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 20px;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #1e4e4e;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.user-info button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-profile img {
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.welcome-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.status-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.status-card {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    width: 30%;
+    text-align: center;
+}
+
+.status-card.all {
+    background-color: #ffcccc;
+}
+
+.status-card.pending {
+    background-color: #ffeb99;
+}
+
+.status-card.approved {
+    background-color: #cce5ff;
+}
+
+.files-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.files-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.files-section th, .files-section td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+.files-section th {
+    background-color: #e9ecef;
+}
+
+.files-section td button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.right-sidebar {
+    width: 250px;
+    background-color: #e0e0e0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.calendar, .feedback {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+footer {
+    text-align: center;
+    color: #666;
+}

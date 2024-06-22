@@ -1,0 +1,8 @@
+<?php 
+
+//Declare Database here
+
+
+
+
+?>
