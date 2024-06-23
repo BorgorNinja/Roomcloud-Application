@@ -53,8 +53,8 @@ $conn->close();
                 <span>Room|Cloud</span>
             </div>
             <div class="auth-links">
-                <a href="#">Login</a>
-                <a href="#" class="signup">Sign Up</a>
+                <a href="login.php">Login</a>
+                <a href="register.html" class="signup">Sign Up</a>
             </div>
         </header>
         <main>

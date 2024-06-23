@@ -32,8 +32,7 @@ if ($conn->query($sql) === TRUE) {
         section VARCHAR(50) NOT NULL,
         email VARCHAR(100) NOT NULL,
         contact_number VARCHAR(20) NOT NULL,
-        new_password VARCHAR(255) NOT NULL,
-        confirm_password VARCHAR(255) NOT NULL
+        new_password VARCHAR(255) NOT NULL
     )";
 
     if ($conn->query($sql) !== TRUE) {
@@ -57,18 +56,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $section = $_POST['section'];
     $email = $_POST['email'];
     $contact_number = $_POST['contact_number'];
-    $new_password = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
-    $confirm_password = password_hash($_POST['confirm_password'], PASSWORD_BCRYPT);
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
 
-    // Insert data into table
-    $sql = "INSERT INTO logindata (first_name, middle_name, no_middle_name, last_name, suffix, no_suffix, student_number, course, section, email, contact_number, new_password, confirm_password)
-            VALUES ('$first_name', '$middle_name', $no_middle_name, '$last_name', '$suffix', $no_suffix, '$student_number', '$course', '$section', '$email', '$contact_number', '$new_password', '$confirm_password')";
+    // Check if passwords match
+    if ($new_password !== $confirm_password) {
+        echo "Passwords do not match.";
+        exit();
+    }
 
-    if ($conn->query($sql) === TRUE) {
+    // Hash the password
+    $hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
+
+    // Prepare SQL statement to prevent SQL injection
+    $stmt = $conn->prepare("INSERT INTO logindata (first_name, middle_name, no_middle_name, last_name, suffix, no_suffix, student_number, course, section, email, contact_number, new_password)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssisssssssss", $first_name, $middle_name, $no_middle_name, $last_name, $suffix, $no_suffix, $student_number, $course, $section, $email, $contact_number, $hashed_password);
+
+    // Execute the statement
+    if ($stmt->execute() === TRUE) {
+        // Create user folder
+        $user_folder = "uploads/" . $student_number;
+        if (!file_exists($user_folder)) {
+            mkdir($user_folder, 0777, true);
+        }
         echo "New record created successfully";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
+
+    // Close statement
+    $stmt->close();
 }
 
 // Close connection
