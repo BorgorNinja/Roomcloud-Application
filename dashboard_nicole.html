@@ -1,28 +1,3 @@
-<?php
-session_start();
-
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
-}
-
-include 'db_connect.php';
-
-$username = $_SESSION['username'];
-$userFolder = 'Uploaded Files/' . $username . ' Files';
-
-// Check if user folder exists, if not, create it
-if (!file_exists($userFolder)) {
-    mkdir($userFolder, 0777, true);
-}
-
-$files = array_diff(scandir($userFolder), array('.', '..'));
-
-$totalFiles = count($files);
-$pendingFiles = 0; // Example logic for pending files
-$approvedFiles = 0; // Example logic for approved files
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,7 +138,7 @@ $approvedFiles = 0; // Example logic for approved files
                             <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="dashboard.php" style="color: white;">
+                            <a class="nav-link" href="Dashboard.html" style="color: white;">
                                 <img src="dashboard.png" width="20" height="20">
                                 My Dashboard
                             </a>
@@ -187,7 +162,7 @@ $approvedFiles = 0; // Example logic for approved files
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="logout.php" style="color: white;">
+                            <a class="nav-link" href="Login.html" style="color: white;">
                                 <img src="logout.png" width="20" height="20">
                                 Log out
                             </a>
@@ -201,13 +176,13 @@ $approvedFiles = 0; // Example logic for approved files
                     <h1>Dashboard</h1>
                     <div class="profile-info">
                         <img src="https://via.placeholder.com/100" class="rounded-circle mr-2" height="50px" width="50px" alt="Profile Picture">
-                        <span><?php echo htmlspecialchars($username); ?></span>
+                        <span>Alice</span>
                     </div>
                 </div>
 
                 <div class="card mb-4 welcome-card">
                     <div class="card-body">
-                        <h2 class="card-title">Welcome Back, <?php echo htmlspecialchars($username); ?>!</h2>
+                        <h2 class="card-title">Welcome Back, Alice Guo!</h2>
                         <p class="card-text">Check and update your dashboard!</p>
                     </div>
                 </div>
@@ -218,8 +193,8 @@ $approvedFiles = 0; // Example logic for approved files
                         <div class="card text-white bg-danger mb-3">
                             <div class="card-header">All</div>
                             <div class="card-body">
-                                <h5 class="card-title">Upload Today (<?php echo $totalFiles; ?> Files)</h5>
-                                <p class="card-text">Total files: <?php echo $totalFiles; ?></p>
+                                <h5 class="card-title">Upload Today (5 Files)</h5>
+                                <p class="card-text">Status bar here</p>
                             </div>
                         </div>
                     </div>
@@ -227,8 +202,8 @@ $approvedFiles = 0; // Example logic for approved files
                         <div class="card text-white bg-warning mb-3">
                             <div class="card-header">Pending</div>
                             <div class="card-body">
-                                <h5 class="card-title">Upload Today (<?php echo $pendingFiles; ?> Files)</h5>
-                                <p class="card-text">Pending files: <?php echo $pendingFiles; ?></p>
+                                <h5 class="card-title">Upload Today (10 Files)</h5>
+                                <p class="card-text">Status bar here</p>
                             </div>
                         </div>
                     </div>
@@ -236,8 +211,8 @@ $approvedFiles = 0; // Example logic for approved files
                         <div class="card text-white bg-primary mb-3">
                             <div class="card-header">Approved</div>
                             <div class="card-body">
-                                <h5 class="card-title">Upload Today (<?php echo $approvedFiles; ?> Files)</h5>
-                                <p class="card-text">Approved files: <?php echo $approvedFiles; ?></p>
+                                <h5 class="card-title">Upload Today (14 Files)</h5>
+                                <p class="card-text">Status bar here</p>
                             </div>
                         </div>
                     </div>
@@ -247,22 +222,37 @@ $approvedFiles = 0; // Example logic for approved files
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>File Name</th>
+                            <th>File</th>
                             <th>Type</th>
                             <th>Size</th>
-                            <th>Last Modified</th>
+                            <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($files as $file): ?>
-                            <?php $filePath = $userFolder . '/' . $file; ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($file); ?></td>
-                                <td><?php echo htmlspecialchars(pathinfo($filePath, PATHINFO_EXTENSION)); ?></td>
-                                <td><?php echo round(filesize($filePath) / 1024 / 1024, 2) . ' MB'; ?></td>
-                                <td><?php echo date("M d, Y", filemtime($filePath)); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <tr>
+                            <td>File001</td>
+                            <td>.pdf</td>
+                            <td>2.5MB</td>
+                            <td>Nov 24, 2019</td>
+                        </tr>
+                        <tr>
+                            <td>File002</td>
+                            <td>.pdf</td>
+                            <td>1.5MB</td>
+                            <td>Dec 15, 2020</td>
+                        </tr>
+                        <tr>
+                            <td>File003</td>
+                            <td>.pdf</td>
+                            <td>3.4MB</td>
+                            <td>Aug 15, 2017</td>
+                        </tr>
+                        <tr>
+                            <td>File004</td>
+                            <td>.pdf</td>
+                            <td>3.5MB</td>
+                            <td>Jun 9, 2022</td>
+                        </tr>
                     </tbody>
                 </table>
             </main>
@@ -271,6 +261,4 @@ $approvedFiles = 0; // Example logic for approved files
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap

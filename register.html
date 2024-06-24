@@ -4,13 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="register.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-link {
+            display: block;
+            text-align: right;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+
+        .login-link span {
+            font-weight: bold;
+        }
+
+        .create-account-button {
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .form-container {
+            padding: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        .form-section h3 {
+            color: #007bff;
+        }
+
+        .form-section label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-section input,
+        .form-section select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-section input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .form-section input[type="checkbox"] + label {
+            display: inline-block;
+            margin: 0;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .logo img {
+            display: block;
+            margin: 0 auto 10px;
+            width: 100px;
+            height: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: darkcyan;
+        }
+
+        .alert {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <a href="#" class="login-link">Already have an account? <span>Login</span></a>
+        <a href="login.html" class="login-link">Already have an account? <span>Login</span></a>
         <a href="#" class="create-account-button">Create account</a>
         <div class="form-container">
+            <div class="alert alert-danger" id="error-alert"></div>
+            <div class="alert alert-success" id="success-alert"></div>
             <form action="register.php" method="POST">
                 <div class="logo">
                     <img src="asset_logo.png" alt="Logo">
@@ -56,5 +157,9 @@
             </form>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 </body>
 </html>
