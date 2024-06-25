@@ -9,8 +9,16 @@ if (!isset($_SESSION['username'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
     $errors = [];
-    $path = 'uploads/';
+    $base_path = 'uploads/';
     $extensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'];
+
+    $username = $_SESSION['username'];
+    $user_path = $base_path . $username . '/';
+
+    // Create user-specific folder if it doesn't exist
+    if (!is_dir($user_path)) {
+        mkdir($user_path, 0777, true);
+    }
 
     $file_name = $_FILES['file']['name'];
     $file_tmp = $_FILES['file']['tmp_name'];
@@ -21,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
     $file_name_parts = explode('.', $_FILES['file']['name']);
     $file_ext = strtolower(end($file_name_parts));
 
-    $file = $path . basename($file_name);
+    $file = $user_path . basename($file_name);
 
     if (!in_array($file_ext, $extensions)) {
         $errors[] = 'Extension not allowed: ' . $file_name . ' ' . $file_type;

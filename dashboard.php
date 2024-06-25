@@ -9,7 +9,7 @@ if (!isset($_SESSION['username'])) {
 include 'db_connect.php';
 
 $username = $_SESSION['username'];
-$userFolder = 'Uploaded Files/' . $username . ' Files';
+$userFolder = 'uploads/' . $username;
 
 // Check if user folder exists, if not, create it
 if (!file_exists($userFolder)) {
