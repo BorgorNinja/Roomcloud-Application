@@ -1,0 +1,23 @@
+body {
+    background-color: #135D66;
+}
+
+nav {
+    background-color: #003C43;
+}
+
+.container-fluid a {
+    color: #E3FEF7;
+}
+
+.container-fluid a:hover {
+    color: #557f7b;
+}
+
+footer {
+    background-color: #003C43;
+}
+footer li a{
+    text-decoration: none;
+    color: #E3FEF7;
+}
