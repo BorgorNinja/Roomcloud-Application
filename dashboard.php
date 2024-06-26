@@ -181,7 +181,7 @@ $approvedFiles = 0; // Example logic for approved files
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="Status1.html" style="color: white;">
+                            <a class="nav-link" href="status_page.php" style="color: white;">
                                 <img src="status.png" width="20" height="20">
                                 Status
                             </a>
