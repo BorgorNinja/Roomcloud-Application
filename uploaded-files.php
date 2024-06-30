@@ -173,6 +173,20 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
         .table thead th {
             position: relative;
         }
+
+        .modal-content {
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal-body {
+            padding: 0;
+        }
+
+        .file-viewer {
+            width: 100%;
+            height: 80vh;
+        }
     </style>
 </head>
 <body>
@@ -247,6 +261,7 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
                                     <td><?php echo round(filesize($filePath) / 1024, 2) . ' KB'; ?></td>
                                     <td><?php echo date("M d, Y", filemtime($filePath)); ?></td>
                                     <td>
+                                        <button class="view-button btn btn-info btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">View File</button>
                                         <button class="rename-button btn btn-secondary btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">Rename</button>
                                         <button class="delete-button btn btn-danger btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">Delete</button>
                                     </td>
@@ -261,43 +276,80 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
         </div>
     </div>
 
+    <!-- Modal for viewing files -->
+    <div class="modal fade" id="fileViewerModal" tabindex="-1" role="dialog" aria-labelledby="fileViewerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileViewerModalLabel">View File</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="fileViewer" class="file-viewer"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#three-dots-btn').click(function() {
-                $('#three-dots-menu').toggleClass('show');
-            });
-
-            $('.rename-button').click(function() {
-                var filename = $(this).data('filename');
-                var newFilename = prompt("Enter new name for the file:", filename);
-                if (newFilename !== null && newFilename !== filename) {
-                    // Perform rename operation via AJAX
-                    $.post('rename_file.php', { old_name: filename, new_name: newFilename }, function(response) {
-                        alert(response);
-                        location.reload();
-                    });
-                }
-            });
-
-            $('.delete-button').click(function() {
-                var filename = $(this).data('filename');
-                if (confirm("Are you sure you want to delete this file?")) {
-                    // Perform delete operation via AJAX
-                    $.post('delete_file.php', { name: filename }, function(response) {
-                        alert(response);
-                        location.reload();
-                    });
-                }
-            });
-
-            $('#sort-btn').click(function() {
-                // Perform sort operation via AJAX or client-side sorting
-                alert("Sort function clicked!");
-            });
+    $(document).ready(function() {
+        // Show the dropdown menu
+        $('#three-dots-btn').click(function() {
+            $('#three-dots-menu').toggle();
         });
-    </script>
+
+        // Hide the dropdown menu when clicking outside
+        $(document).click(function(event) {
+            if (!$(event.target).closest('#three-dots-btn').length) {
+                $('#three-dots-menu').hide();
+            }
+        });
+
+        // Handle view file button click
+        $('.view-button').click(function() {
+            var fileName = $(this).data('filename');
+            var filePath = '<?php echo $userFolder; ?>/' + fileName;
+            var fileExtension = fileName.split('.').pop().toLowerCase();
+
+            if (['txt', 'pdf', 'jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                $('#fileViewer').attr('src', filePath);
+                $('#fileViewerModal').modal('show');
+            } else {
+                alert('File type not supported for viewing.');
+            }
+        });
+
+        // Handle delete button click
+        $('.delete-button').click(function() {
+            var fileName = $(this).data('filename');
+            if (confirm('Are you sure you want to delete ' + fileName + '?')) {
+                $.post('delete_file.php', { filename: fileName }, function(response) {
+                    var result = JSON.parse(response);
+                    if (result.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                });
+            }
+        });
+
+        // Handle rename button click
+        $('.rename-button').click(function() {
+            var oldName = $(this).data('filename');
+            var newName = prompt('Enter new name for ' + oldName + ':', oldName);
+            if (newName && newName !== oldName) {
+                $.post('rename_file.php', { oldName: oldName, newName: newName }, function(response) {
+                    location.reload();
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

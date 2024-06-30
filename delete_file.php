@@ -1,20 +1,23 @@
 <?php
 session_start();
-include('db_connect.php');
 
-if (!isset($_SESSION['username']) || !isset($_POST['name'])) {
-    echo "Invalid request.";
+if (!isset($_SESSION['username'])) {
+    echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
     exit();
 }
 
-$username = $_SESSION['username'];
-$userFolder = 'uploads/' . $username;
-$fileName = $_POST['name'];
+if (isset($_POST['filename'])) {
+    $username = $_SESSION['username'];
+    $userFolder = 'uploads/' . $username;
+    $filePath = $userFolder . '/' . $_POST['filename'];
 
-if (file_exists($userFolder . '/' . $fileName)) {
-    unlink($userFolder . '/' . $fileName);
-    echo "File deleted successfully.";
+    if (file_exists($filePath)) {
+        unlink($filePath);
+        echo json_encode(['status' => 'success', 'message' => 'File deleted successfully']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'File not found']);
+    }
 } else {
-    echo "File does not exist.";
+    echo json_encode(['status' => 'error', 'message' => 'Filename not specified']);
 }
 ?>
