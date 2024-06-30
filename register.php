@@ -49,10 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $middle_name = $_POST['middle_name'];
     $no_middle_name = isset($_POST['no_middle_name']) ? 1 : 0;
     $last_name = $_POST['last_name'];
-    $suffix = $_POST['suffix'];
+    $suffix = isset($_POST['suffix']) ? $_POST['suffix'] : '';
     $no_suffix = isset($_POST['no_suffix']) ? 1 : 0;
     $student_number = $_POST['student_number'];
-    $course = $_POST['course'];
+    $course = isset($_POST['course']) ? $_POST['course'] : '';
     $section = $_POST['section'];
     $email = $_POST['email'];
     $contact_number = $_POST['contact_number'];

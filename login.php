@@ -87,8 +87,8 @@ $conn->close();
             </div>
         </main>
         <footer>
-            <a href="#">Contact Us</a>
-            <a href="#">Privacy Policy</a>
+            <a href="contactus.html">Contact Us</a>
+            <a href="privacy.html">Privacy Policy</a>
             <a href="#">Help Center</a>
             <p>All rights reserved© 2024</p>
         </footer>

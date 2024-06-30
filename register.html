@@ -1,165 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
+<script>
+    function selectCourse(course) {
+        document.getElementById('courseDropdown').innerText = course;
+        document.getElementById('course').value = course;
+    }
+</script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .login-link {
-            display: block;
-            text-align: right;
-            margin-bottom: 10px;
-            color: #007bff;
-        }
-
-        .login-link span {
-            font-weight: bold;
-        }
-
-        .create-account-button {
-            display: block;
-            text-align: center;
-            margin: 20px auto;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .form-container {
-            padding: 20px;
-        }
-
-        .form-section {
-            margin-bottom: 20px;
-        }
-
-        .form-section h3 {
-            color: #007bff;
-        }
-
-        .form-section label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-section input,
-        .form-section select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .form-section input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
-        }
-
-        .form-section input[type="checkbox"] + label {
-            display: inline-block;
-            margin: 0;
-        }
-
-        button[type="submit"] {
-            width: 100%;
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .logo img {
-            display: block;
-            margin: 0 auto 10px;
-            width: 100px;
-            height: auto;
-        }
-
-        h2 {
-            text-align: center;
-            color: darkcyan;
-        }
-
-        .alert {
-            display: none;
-        }
-    </style>
+    <title>Room|Cloud</title>
+    <link rel="icon" type="image/x-icon" href="images/Untitled136_20240527141040.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="register.css">
 </head>
-<body>
-    <div class="container">
-        <a href="login.php" class="login-link">Already have an account? <span>Login</span></a>
-        <a href="#" class="create-account-button">Create account</a>
-        <div class="form-container">
-            <div class="alert alert-danger" id="error-alert"></div>
-            <div class="alert alert-success" id="success-alert"></div>
-            <form action="register.php" method="POST">
-                <div class="logo">
-                    <img src="asset_logo.png" alt="Logo">
-                </div>
-                <h2>ROOM | Cloud</h2>
-                <div class="form-section">
-                    <h3>Student Information</h3>
-                    <label>First name</label>
-                    <input type="text" name="first_name" required>
-                    <label>Middle name</label>
-                    <input type="text" name="middle_name">
-                    <label><input type="checkbox" name="no_middle_name"> No middle name</label>
-                    <label>Last name</label>
-                    <input type="text" name="last_name" required>
-                    <label>Suffix</label>
-                    <input type="text" name="suffix">
-                    <label><input type="checkbox" name="no_suffix"> No suffix</label>
-                    <label>Student number</label>
-                    <input type="text" name="student_number" required>
-                    <label>Select course</label>
-                    <select name="course" required>
-                        <option value="Course 1">Course 1</option>
-                        <option value="Course 2">Course 2</option>
-                    </select>
-                    <label>Section</label>
-                    <input type="text" name="section" required>
-                </div>
-                <div class="form-section">
-                    <h3>Contact Information</h3>
-                    <label>Enter your email</label>
-                    <input type="email" name="email" required>
-                    <label>Contact number</label>
-                    <input type="text" name="contact_number" required>
-                </div>
-                <div class="form-section">
-                    <h3>Account Information</h3>
-                    <label>Enter new password</label>
-                    <input type="password" name="new_password" required>
-                    <label>Confirm new password</label>
-                    <input type="password" name="confirm_password" required>
-                </div>
-                <button type="submit">Register</button>
-            </form>
-        </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+<body>
+    <nav class="navbar navbar-fixed-top navbar-expand-md">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-light" href="login.php">
+                <img src="Roomcloud.png" alt="Room|Cloud" style="height: 30px; width: 30px;"
+                    class="d-inline-block align-text-top">
+                Room|Cloud
+            </a>
+            <div class="navbar-nav me-md-4">
+                <a href="login.php" class="nav-link me-md-4 fw-light">Already have an account? <span
+                        style="color: #77B0AA;">Login.</span></a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <form action="register.php" method="post">
+            <div class="row cols-2">
+                <div class="col-sm-6 align-items-center p-3">
+                    <div class="card border border-secondary border-5 rounded rounded-5">
+                        <div class="card-body ">
+                            <h1 class="h3 fw-bolder m-5 text-center">Student Information</h1>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" name="first_name" id="first_name" placeholder="First Name" required />
+                                <label for="first_name">First Name</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" name="middle_name" id="middle_name" placeholder="Middle Name" />
+                                <label for="middle_name">Middle Name</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="no_middle_name" id="no_middle_name" value="1" />
+                                <label class="form-check-label" for="no_middle_name"> No Middle name </label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name" required />
+                                <label for="last_name">Last Name</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" name="student_number" id="student_number" placeholder="Student Number" required />
+                                <label for="student_number">Student Number</label>
+                            </div>
+                            <ul class="list-unstyled text-decoration-none d-flex align-content-center">
+                                <li>
+                                    <div class="dropdown open">
+                                        <button class="btn btn-secondary dropdown-toggle me-3 p-3" type="button" id="courseDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Select Course
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="courseDropdown">
+                                            <button class="dropdown-item" type="button" onclick="selectCourse('BSIT')">BSIT</button>
+                                            <button class="dropdown-item" type="button" onclick="selectCourse('BSCS')">BSCS</button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" name="section" id="section" placeholder="Section" required />
+                                        <label for="section">Section</label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 align-items-center p-3">
+                    <div class="card border border-secondary border-5 rounded rounded-5 w-auto mb-3">
+                        <div class="card-body">
+                            <h1 class="h3 fw-bolder text-center p-3">Contact Information</h1>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" name="contact_number" id="contact_number" placeholder="Phone Number" required />
+                                <label for="contact_number">Phone Number</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Email" required />
+                                <label for="email">Email</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border border-secondary border-5 rounded rounded-5">
+                        <div class="card-body">
+                            <h1 class="h3 fw-bolder text-center p-3">Account Information</h1>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" name="new_password" id="new_password" placeholder="Password" required />
+                                <label for="new_password">Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required />
+                                <label for="confirm_password">Confirm Password</label>
+                            </div>
+                            <div class="form-floating mb=3">
+                                <input type="hidden" name="course" id="course" value="">
+                            </div>
+                            <ul class="list-unstyled d-flex justify-content-center align-items-center">
+                                <li>
+                                    <button type="submit" class="p-3 bg-secondary btn btn-outline-light border border-dark-subtle border-3">Create Account</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <footer class="footer footer-sticky-bottom justify-content-center text-center" style="height: 150px;">
+        <div class="col-sm-12">
+            <ul class="list-unstyled d-flex justify-content-evenly mb-5" style="color: #E3FEF7;">
+                <li><a href="contactus.html">Contact Us</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="#">Help Center</a></li>
+            </ul>
+        </div>
+        <p class="fw-lighter" style="color: #E3FEF7;">All rights reserved.</p>
+        <p class="fw-lighter" style="color: #E3FEF7;">2024</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script>
+        function selectCourse(course) {
+            document.getElementById('courseDropdown').innerText = course;
+            document.getElementById('courseDropdown').value = course;
+        }
+    </script>
 </body>
+
 </html>
