@@ -83,7 +83,7 @@ $conn->close();
                     
                     <button type="submit">Login</button>
                 </form>
-                <a href="#" class="forgot-password">Forgot Password?</a>
+                <a href="resetpass.html" class="forgot-password">Forgot Password?</a>
             </div>
         </main>
         <footer>
