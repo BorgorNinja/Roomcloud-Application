@@ -148,6 +148,31 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
         .welcome-card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .three-dots-menu {
+            position: absolute;
+            top: 40px;
+            right: 10px;
+            display: none;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .three-dots-menu a {
+            display: block;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .three-dots-menu a:hover {
+            background-color: #ddd;
+        }
+
+        .table thead th {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -159,8 +184,8 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
                         <li class="nav-item text-center">
                             <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle;">
                             <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
-    </li>
-    <li class="nav-item">
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
                                 <span data-feather="home"></span>
                                 Dashboard
@@ -201,10 +226,16 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
                     <table class="table table-striped table-sm">
                         <thead>
                             <tr>
-                                <th>File Name</th>
+                                <th>File Name
+                                    <button id="three-dots-btn" class="btn btn-link"><span>&#8942;</span></button>
+                                    <div id="three-dots-menu" class="three-dots-menu">
+                                        <a href="#" id="sort-btn">Sort</a>
+                                    </div>
+                                </th>
                                 <th>Type</th>
                                 <th>Size</th>
                                 <th>Last Modified</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -215,6 +246,10 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
                                     <td><?php echo htmlspecialchars(pathinfo($filePath, PATHINFO_EXTENSION)); ?></td>
                                     <td><?php echo round(filesize($filePath) / 1024, 2) . ' KB'; ?></td>
                                     <td><?php echo date("M d, Y", filemtime($filePath)); ?></td>
+                                    <td>
+                                        <button class="rename-button btn btn-secondary btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">Rename</button>
+                                        <button class="delete-button btn btn-danger btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">Delete</button>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -226,12 +261,43 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        feather.replace();
+        $(document).ready(function() {
+            $('#three-dots-btn').click(function() {
+                $('#three-dots-menu').toggleClass('show');
+            });
+
+            $('.rename-button').click(function() {
+                var filename = $(this).data('filename');
+                var newFilename = prompt("Enter new name for the file:", filename);
+                if (newFilename !== null && newFilename !== filename) {
+                    // Perform rename operation via AJAX
+                    $.post('rename_file.php', { old_name: filename, new_name: newFilename }, function(response) {
+                        alert(response);
+                        location.reload();
+                    });
+                }
+            });
+
+            $('.delete-button').click(function() {
+                var filename = $(this).data('filename');
+                if (confirm("Are you sure you want to delete this file?")) {
+                    // Perform delete operation via AJAX
+                    $.post('delete_file.php', { name: filename }, function(response) {
+                        alert(response);
+                        location.reload();
+                    });
+                }
+            });
+
+            $('#sort-btn').click(function() {
+                // Perform sort operation via AJAX or client-side sorting
+                alert("Sort function clicked!");
+            });
+        });
     </script>
 </body>
 </html>
