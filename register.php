@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $suffix = isset($_POST['suffix']) ? $_POST['suffix'] : '';
     $no_suffix = isset($_POST['no_suffix']) ? 1 : 0;
     $student_number = $_POST['student_number'];
-    $course = isset($_POST['course']) ? $_POST['course'] : '';
+    $course = $_POST['course'];
     $section = $_POST['section'];
     $email = $_POST['email'];
     $contact_number = $_POST['contact_number'];
