@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0A7273;
+   
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+			
+        }
+        .header .btn {
+            background-color: #6D8A89;
+            border: none;
+			
+			margin-left:20px;
+			
+        }
+        .stat {
+            text-align: left;
+            background-color: #629492;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .stat h3 {
+            margin: 0;
+        }
+        .table-responsive {
+            background-color: #1B4848;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .table th, .table td {
+            color: white;
+        }
+        .btn-view {
+            background-color: #6D8A89;
+            border: none;
+      
+		
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+           <img src="1.png" height="100">  <h4>Room|Cloud</h4>
+		   
+            <div>
+                <button class="btn btn-primary">Dashboard</button>
+                <button class="btn btn-primary">Archive</button>
+                <button class="btn btn-danger">Logout</button>
+            </div>
+        </div>
+        <div class="row text-center mb-4">
+            <div class="col stat">
+                <h3>No. of files uploaded today:</h3>
+                <h1>20</h1>
+            </div>
+            <div class="col stat">
+                <h3>No. of files pending:</h3>
+                <h1>4</h1>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <div class="col-md-4">
+                <select class="form-control">
+                    <option>Sort by</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select class="form-control">
+                    <option>Filter by</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-white table-striped">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>File Size</th>
+                        <th>Date Modified</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>File001</td>
+                        <td>.pdf</td>
+                        <td>2.5MB</td>
+                        <td>04-01-2024</td>
+                        <td>John Doe</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-view">View</button></td>
+                    </tr>
+                    <tr>
+                        <td>File002</td>
+                        <td>.pdf</td>
+                        <td>3.5MB</td>
+                        <td>01-03-2024</td>
+                        <td>John Doe</td>
+                        <td>Approved</td>
+                        <td><button class="btn btn-view">View</button></td>
+                    </tr>
+                    <tr>
+                        <td>File003</td>
+                        <td>.pdf</td>
+                        <td>3.4MB</td>
+                        <td>04-01-2024</td>
+                        <td>Jane Doe</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-view">View</button></td>
+                    </tr>
+                    <tr>
+                        <td>File004</td>
+                        <td>.jpeg</td>
+                        <td>2.5MB</td>
+                        <td>04-01-2024</td>
+                        <td>Jane Doe</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-view">View</button></td>
+                    </tr>
+                    <tr>
+                        <td>File005</td>
+                        <td>.jpeg</td>
+                        <td>2.5MB</td>
+                        <td>04-01-2024</td>
+                        <td>Jane Doe</td>
+                        <td>Approved</td>
+                        <td><button class="btn btn-view">View</button></td>
+                    </tr>
+                    <tr>
+                        <td>File006</td>
+                        <td>.jpeg<
