@@ -10,38 +10,38 @@ if (!isset($_SESSION['username'])) {
 
 // Validate request parameters
 if (!isset($_GET['file'])) {
-    echo json_encode(["status" => "error", "message" => "Filename not specified"]);
+    header("Location: uploaded-files.php?error=Filename not specified");
     exit();
 }
 
 $username = $_SESSION['username'];
-$filename = $_GET['file'];
+$file = $_GET['file'];
+$userFolder = 'uploads/' . $username . '/';
+$filePath = $userFolder . $file;
 
-$filePath = 'uploads/' . $username . '/' . $filename;
+// Check if the file exists
+if (!file_exists($filePath)) {
+    header("Location: uploaded-files.php?error=File not found");
+    exit();
+}
 
 // Delete the file
-if (file_exists($filePath)) {
-    if (unlink($filePath)) {
-        // Remove the file record from the database
-        $query = "DELETE FROM uploads WHERE username=? AND filename=?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('ss', $username, $filename);
-        $stmt->execute();
+if (unlink($filePath)) {
+    // Delete the file record from the database
+    $query = "DELETE FROM uploads WHERE filename=? AND username=?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('ss', $file, $username);
+    $stmt->execute();
 
-        if ($stmt->affected_rows > 0) {
-            echo json_encode(["status" => "success", "message" => "File deleted successfully"]);
-            header('Location: uploaded-files.php')
-        } else {
-            echo json_encode(["status" => "error", "message" => "Database update failed"]);
-        }
+    if ($stmt->affected_rows > 0) {
+        header("Location: uploaded-files.php?success=File deleted successfully");
     } else {
-        echo json_encode(["status" => "error", "message" => "File deletion failed"]);
+        header("Location: uploaded-files.php?error=Failed to delete file record from database");
     }
 } else {
-    echo json_encode(["status" => "error", "message" => "File not found"]);
+    header("Location: uploaded-files.php?error=Failed to delete file");
 }
 
 $stmt->close();
 $conn->close();
-exit();
 ?>

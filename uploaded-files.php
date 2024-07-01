@@ -11,13 +11,12 @@ if (!isset($_SESSION['username'])) {
 $username = $_SESSION['username'];
 
 // Retrieve the list of approved files
-$query = "SELECT filename, filetype, filesize, upload_time FROM uploads WHERE username=? AND status='approved'";
+$query = "SELECT id, filename, filetype, filesize, upload_time, comment FROM uploads WHERE username=? AND status='approved'";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('s', $username);
 $stmt->execute();
 $result = $stmt->get_result();
 $files = $result->fetch_all(MYSQLI_ASSOC);
-
 ?>
 
 <!DOCTYPE html>
@@ -240,32 +239,39 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
                     <table class="table table-striped table-sm">
                         <thead>
                             <tr>
-                                <th>File Name
-                                    <button id="three-dots-btn" class="btn btn-link"><span>&#8942;</span></button>
-                                    <div id="three-dots-menu" class="three-dots-menu">
-                                        <a href="#" id="sort-btn">Sort</a>
-                                    </div>
-                                </th>
+                                <th>File Name</th>
                                 <th>Type</th>
                                 <th>Size</th>
                                 <th>Last Modified</th>
                                 <th>Actions</th>
+                                <th>Comment</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($files as $file): ?>
+                            <?php if (!empty($files)): ?>
+                                <?php foreach ($files as $file): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($file['filename']); ?></td>
+                                        <td><?php echo htmlspecialchars($file['filetype']); ?></td>
+                                        <td><?php echo htmlspecialchars($file['filesize']); ?> KB</td>
+                                        <td><?php echo htmlspecialchars($file['upload_time']); ?></td>
+                                        <td>
+                                            <button class="view-button btn btn-info btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>" data-filetype="<?php echo htmlspecialchars($file['filetype']); ?>">View File</button>
+                                            <a href="uploads/<?php echo htmlspecialchars($username); ?>/<?php echo htmlspecialchars($file['filename']); ?>" download class="btn btn-secondary btn-sm">Download</a>
+                                            <button class="rename-button btn btn-secondary btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">Rename</button>
+                                            <button class="delete-button btn btn-danger btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">Delete</button>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="comment-box form-control" placeholder="Add comment" value="<?php echo htmlspecialchars($file['comment']); ?>">
+                                            <button class="ok-button btn btn-primary btn-sm" data-fileid="<?php echo $file['id']; ?>">OK</button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($file['filename']); ?></td>
-                                    <td><?php echo htmlspecialchars($file['filetype']); ?></td>
-                                    <td><?php echo htmlspecialchars($file['filesize']); ?> KB</td>
-                                    <td><?php echo htmlspecialchars($file['upload_time']); ?></td>
-                                    <td>
-                                        <button class="view-button btn btn-info btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">View File</button>
-                                        <button class="rename-button btn btn-secondary btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">Rename</button>
-                                        <button class="delete-button btn btn-danger btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">Delete</button>
-                                    </td>
+                                    <td colspan="6">No files found.</td>
                                 </tr>
-                            <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -286,41 +292,56 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
                     </button>
                 </div>
                 <div class="modal-body">
-                    <iframe id="fileViewer" class="file-viewer"></iframe>
+                    <iframe id="fileViewer" class="file-viewer" style="display: none;"></iframe>
+                    <img id="fileImage" class="file-viewer" style="display: none; max-width: 100%;" />
+                    <video id="fileVideo" class="file-viewer" controls style="display: none; width: 100%;"></video>
+                    <audio id="fileAudio" class="file-viewer" controls style="display: none; width: 100%;"></audio>
+                    <pre id="fileText" class="file-viewer" style="display: none; white-space: pre-wrap;"></pre>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
     $(document).ready(function() {
-        // Show the dropdown menu
-        $('#three-dots-btn').click(function() {
-            $('#three-dots-menu').toggle();
-        });
-
-        // Hide the dropdown menu when clicking outside
-        $(document).click(function(event) {
-            if (!$(event.target).closest('#three-dots-btn').length) {
-                $('#three-dots-menu').hide();
-            }
-        });
-
         // Handle view file button click
         $('.view-button').click(function() {
             var fileName = $(this).data('filename');
+            var fileType = $(this).data('filetype');
             var filePath = 'uploads/<?php echo $username; ?>/' + fileName;
-            var fileExtension = fileName.split('.').pop().toLowerCase();
+            var fileViewer = $('#fileViewer');
+            var fileImage = $('#fileImage');
+            var fileVideo = $('#fileVideo');
+            var fileAudio = $('#fileAudio');
+            var fileText = $('#fileText');
 
-            if (fileExtension === 'pdf') {
-                $('#fileViewer').attr('src', filePath);
-                $('#fileViewerModal').modal('show');
+            // Reset viewer
+            fileViewer.hide().attr('src', '');
+            fileImage.hide().attr('src', '');
+            fileVideo.hide().attr('src', '');
+            fileAudio.hide().attr('src', '');
+            fileText.hide().text('');
+
+            if (fileType === 'application/pdf') {
+                fileViewer.show().attr('src', filePath);
+            } else if (fileType === 'image/jpeg' || fileType === 'image/png' || fileType === 'image/gif') {
+                fileImage.show().attr('src', filePath);
+            } else if (fileType === 'video/mp4' || fileType === 'video/m4a' || fileType === 'video/avi' || fileType === 'video/mkv') {
+                fileVideo.show().attr('src', filePath);
+            } else if (fileType === 'audio/mp3' || fileType === 'audio/wav') {
+                fileAudio.show().attr('src', filePath);
+            } else if (fileType === 'text/plain') {
+                $.get(filePath, function(data) {
+                    fileText.show().text(data);
+                });
             } else {
                 alert('Viewing this file type is not supported.');
             }
+
+            $('#fileViewerModal').modal('show');
         });
 
         // Handle rename button click
@@ -338,6 +359,19 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
             if (confirm('Are you sure you want to delete this file?')) {
                 window.location.href = 'delete_file.php?file=' + encodeURIComponent(fileName);
             }
+        });
+
+        // Handle comment OK button click
+        $('.ok-button').click(function() {
+            var fileId = $(this).data('fileid');
+            var comment = $(this).siblings('.comment-box').val();
+            $.post('update_comment.php', { file_id: fileId, comment: comment }, function(response) {
+                if(response.status === 'success') {
+                    alert('Comment updated successfully');
+                } else {
+                    alert('Failed to update comment');
+                }
+            }, 'json');
         });
     });
     </script>
