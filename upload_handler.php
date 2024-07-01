@@ -2,7 +2,7 @@
 session_start();
 include('db_connect.php');
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username']) || !$_SESSION['is_admin']) {
     header("Location: login.php");
     exit();
 }
@@ -41,7 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['file'])) {
 
     if (empty($errors)) {
         if (move_uploaded_file($file_tmp, $file)) {
-            $_SESSION['result_message'] = "File uploaded successfully";
+            // Insert file details into the database with status 'pending'
+            $status = 'pending';
+            $query = "INSERT INTO uploads (username, name, size, type, status, path) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param('ssisss', $username, $file_name, $file_size, $file_type, $status, $file);
+            $stmt->execute();
+
+            $_SESSION['result_message'] = "File uploaded successfully and is pending approval";
         } else {
             $_SESSION['result_message'] = "There was an error uploading your file.";
         }

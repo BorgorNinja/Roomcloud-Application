@@ -20,6 +20,17 @@ if (!file_exists($userFolder)) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['fileToUpload'])) {
     $targetFile = $userFolder . '/' . basename($_FILES['fileToUpload']['name']);
     if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $targetFile)) {
+        // Insert file details into the database with status 'pending'
+        $fileName = basename($_FILES['fileToUpload']['name']);
+        $fileSize = $_FILES['fileToUpload']['size'];
+        $fileType = $_FILES['fileToUpload']['type'];
+        $status = 'pending';
+
+        $query = "INSERT INTO uploads (username, filename, filesize, filetype, status) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('ssiss', $username, $fileName, $fileSize, $fileType, $status);
+        $stmt->execute();
+
         $uploadSuccess = true;
     } else {
         $uploadError = "Sorry, there was an error uploading your file.";
@@ -157,81 +168,81 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['fileToUpload'])) {
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <nav class="col-md-2 d-none d-md-block sidebar">
-                <div class="sidebar-sticky">
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block sidebar">
+            <div class="sidebar-sticky">
                 <ul class="nav flex-column">
-                            <li class="nav-item text-center">
-                                <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle;">
-                                <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="dashboard.php">
-                                    <span data-feather="home"></span>
-                                    Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="uploaded-files.php">
-                                    <span data-feather="file"></span>
-                                    Uploaded Files
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="upload.php">
-                                    <span data-feather="upload"></span>
-                                    Upload
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="logout.php">
-                                    <span data-feather="log-out"></span>
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Upload File</h1>
-                    </div>
-
-                    <div class="profile-info">
-                        <span>Welcome, <?php echo htmlspecialchars($username); ?>!</span>
-                    </div>
-
-                    <?php if (isset($uploadSuccess) && $uploadSuccess): ?>
-                        <div class="alert alert-success" role="alert">
-                            File uploaded successfully!
-                        </div>
-                    <?php elseif (isset($uploadError)): ?>
-                        <div class="alert alert-danger" role="alert">
-                            <?php echo htmlspecialchars($uploadError); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <form action="upload.php" method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="fileToUpload">Select file to upload:</label>
-                            <input type="file" name="fileToUpload" id="fileToUpload" class="form-control-file">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Upload File</button>
-                    </form>
-
-                    <a href="dashboard.php" class="btn btn-secondary mt-3">Back to Dashboard</a>
-                </main>
+                    <li class="nav-item text-center">
+                        <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle;">
+                        <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.php">
+                            <span data-feather="home"></span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="uploaded-files.php">
+                            <span data-feather="file"></span>
+                            Uploaded Files
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="upload.php">
+                            <span data-feather="upload"></span>
+                            Upload
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php">
+                            <span data-feather="log-out"></span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
+        </nav>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script src="https://unpkg.com/feather-icons"></script>
-        <script>
-            feather.replace();
-        </script>
-    </body>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Upload File</h1>
+            </div>
+
+            <div class="profile-info">
+                <span>Welcome, <?php echo htmlspecialchars($username); ?>!</span>
+            </div>
+
+            <?php if (isset($uploadSuccess) && $uploadSuccess): ?>
+                <div class="alert alert-success" role="alert">
+                    File uploaded successfully and pending admin approval!
+                </div>
+            <?php elseif (isset($uploadError)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?php echo htmlspecialchars($uploadError); ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="upload.php" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="fileToUpload">Select file to upload:</label>
+                    <input type="file" name="fileToUpload" id="fileToUpload" class="form-control-file">
+                </div>
+                <button type="submit" class="btn btn-primary">Upload File</button>
+            </form>
+
+            <a href="dashboard.php" class="btn btn-secondary mt-3">Back to Dashboard</a>
+        </main>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+    feather.replace();
+</script>
+</body>
 </html>

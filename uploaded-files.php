@@ -9,15 +9,14 @@ if (!isset($_SESSION['username'])) {
 }
 
 $username = $_SESSION['username'];
-$userFolder = 'uploads/' . $username;
 
-// Ensure the user's folder exists
-if (!file_exists($userFolder)) {
-    mkdir($userFolder, 0777, true);
-}
-
-// Retrieve the list of files
-$files = array_diff(scandir($userFolder), array('.', '..'));
+// Retrieve the list of approved files
+$query = "SELECT filename, filetype, filesize, upload_time FROM uploads WHERE username=? AND status='approved'";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$files = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
 
@@ -28,6 +27,7 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uploaded Files</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             font-size: .875rem;
@@ -201,25 +201,25 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
-                                <span data-feather="home"></span>
+                                <i class="bi bi-house-door"></i>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="uploaded-files.php">
-                                <span data-feather="file"></span>
+                                <i class="bi bi-file-earmark"></i>
                                 Uploaded Files
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="upload.php">
-                                <span data-feather="upload"></span>
+                                <i class="bi bi-upload"></i>
                                 Upload
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php">
-                                <span data-feather="log-out"></span>
+                                <i class="bi bi-box-arrow-right"></i>
                                 Logout
                             </a>
                         </li>
@@ -254,16 +254,15 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
                         </thead>
                         <tbody>
                             <?php foreach ($files as $file): ?>
-                                <?php $filePath = $userFolder . '/' . $file; ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($file); ?></td>
-                                    <td><?php echo htmlspecialchars(pathinfo($filePath, PATHINFO_EXTENSION)); ?></td>
-                                    <td><?php echo round(filesize($filePath) / 1024, 2) . ' KB'; ?></td>
-                                    <td><?php echo date("M d, Y", filemtime($filePath)); ?></td>
+                                    <td><?php echo htmlspecialchars($file['filename']); ?></td>
+                                    <td><?php echo htmlspecialchars($file['filetype']); ?></td>
+                                    <td><?php echo htmlspecialchars($file['filesize']); ?> KB</td>
+                                    <td><?php echo htmlspecialchars($file['upload_time']); ?></td>
                                     <td>
-                                        <button class="view-button btn btn-info btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">View File</button>
-                                        <button class="rename-button btn btn-secondary btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">Rename</button>
-                                        <button class="delete-button btn btn-danger btn-sm" data-filename="<?php echo htmlspecialchars($file); ?>">Delete</button>
+                                        <button class="view-button btn btn-info btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">View File</button>
+                                        <button class="rename-button btn btn-secondary btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">Rename</button>
+                                        <button class="delete-button btn btn-danger btn-sm" data-filename="<?php echo htmlspecialchars($file['filename']); ?>">Delete</button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -293,7 +292,7 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
@@ -313,43 +312,34 @@ $files = array_diff(scandir($userFolder), array('.', '..'));
         // Handle view file button click
         $('.view-button').click(function() {
             var fileName = $(this).data('filename');
-            var filePath = '<?php echo $userFolder; ?>/' + fileName;
+            var filePath = 'uploads/<?php echo $username; ?>/' + fileName;
             var fileExtension = fileName.split('.').pop().toLowerCase();
 
-            if (['txt', 'pdf', 'jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+            if (fileExtension === 'pdf') {
                 $('#fileViewer').attr('src', filePath);
                 $('#fileViewerModal').modal('show');
             } else {
-                alert('File type not supported for viewing.');
+                alert('Viewing this file type is not supported.');
+            }
+        });
+
+        // Handle rename button click
+        $('.rename-button').click(function() {
+            var fileName = $(this).data('filename');
+            var newFileName = prompt('Enter new file name:', fileName);
+            if (newFileName !== null && newFileName !== '') {
+                window.location.href = 'rename_file.php?old_name=' + encodeURIComponent(fileName) + '&new_name=' + encodeURIComponent(newFileName);
             }
         });
 
         // Handle delete button click
         $('.delete-button').click(function() {
             var fileName = $(this).data('filename');
-            if (confirm('Are you sure you want to delete ' + fileName + '?')) {
-                $.post('delete_file.php', { filename: fileName }, function(response) {
-                    var result = JSON.parse(response);
-                    if (result.status === 'success') {
-                        location.reload();
-                    } else {
-                        alert(result.message);
-                    }
-                });
-            }
-        });
-
-        // Handle rename button click
-        $('.rename-button').click(function() {
-            var oldName = $(this).data('filename');
-            var newName = prompt('Enter new name for ' + oldName + ':', oldName);
-            if (newName && newName !== oldName) {
-                $.post('rename_file.php', { oldName: oldName, newName: newName }, function(response) {
-                    location.reload();
-                });
+            if (confirm('Are you sure you want to delete this file?')) {
+                window.location.href = 'delete_file.php?file=' + encodeURIComponent(fileName);
             }
         });
     });
-</script>
+    </script>
 </body>
 </html>

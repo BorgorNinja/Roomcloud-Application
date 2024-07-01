@@ -1,19 +1,26 @@
 <?php
 include('db_connect.php');
+session_start(); // Ensure session is started
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $adminId = $_POST['admin_id'];
     $password = $_POST['password'];
 
     $stmt = $conn->prepare("SELECT * FROM staff WHERE admin_id = ?");
-    $stmt->execute([$adminId]);
-    $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->bind_param("s", $adminId); // Bind the adminId parameter
+    $stmt->execute();
+    $result = $stmt->get_result(); // Get the result set
 
-    if ($admin && password_verify($password, $admin['password'])) {
-        session_start();
-        $_SESSION['admin_id'] = $admin['admin_id'];
-        header("Location: admin-dashboard.php");
-        exit();
+    if ($result->num_rows > 0) {
+        $admin = $result->fetch_assoc(); // Fetch the row as an associative array
+        if (password_verify($password, $admin['password'])) {
+            $_SESSION['admin_logged_in'] = true; // Set session variable to indicate logged-in state
+            $_SESSION['admin_id'] = $admin['admin_id'];
+            header("Location: admin-dashboard.php");
+            exit();
+        } else {
+            $error = "Invalid Admin ID or Password.";
+        }
     } else {
         $error = "Invalid Admin ID or Password.";
     }

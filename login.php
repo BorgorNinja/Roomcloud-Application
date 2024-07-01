@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Password is correct, start a session
             $_SESSION['username'] = $first_name;
             $_SESSION['email'] = $email;
+
             header("Location: dashboard.php");
             exit();
         } else {

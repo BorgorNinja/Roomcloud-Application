@@ -16,11 +16,48 @@ if (!file_exists($userFolder)) {
     mkdir($userFolder, 0777, true);
 }
 
-$files = array_diff(scandir($userFolder), array('.', '..'));
+// Retrieve all files for the user
+$query = "SELECT COUNT(*) as total_files FROM uploads WHERE username=?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$stmt->bind_result($totalFiles);
+$stmt->fetch();
+$stmt->close();
 
-$totalFiles = count($files);
-$pendingFiles = 0; // Example logic for pending files
-$approvedFiles = 0; // Example logic for approved files
+// Retrieve pending and approved files counts
+$query = "SELECT status, COUNT(*) as count FROM uploads WHERE username=? GROUP BY status";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$pendingFiles = 0;
+$approvedFiles = 0;
+while ($row = $result->fetch_assoc()) {
+    if ($row['status'] == 'pending') {
+        $pendingFiles = $row['count'];
+    } elseif ($row['status'] == 'approved') {
+        $approvedFiles = $row['count'];
+    }
+}
+
+// Retrieve rejected files
+$query = "SELECT filename FROM uploads WHERE username=? AND status='rejected'";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$rejectedFiles = $result->fetch_all(MYSQLI_ASSOC);
+
+// Retrieve all files for the user to display
+$query = "SELECT filename, filetype, filesize, upload_time FROM uploads WHERE username=?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$files = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +67,7 @@ $approvedFiles = 0; // Example logic for approved files
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             font-size: .875rem;
@@ -153,6 +191,20 @@ $approvedFiles = 0; // Example logic for approved files
     </style>
 </head>
 <body>
+    <div class="container mt-5">
+        <?php if (!empty($rejectedFiles)): ?>
+            <div class="alert alert-warning" role="alert">
+                <?php foreach ($rejectedFiles as $file): ?>
+                    <p><?php echo htmlspecialchars($file['filename']); ?> has been rejected by the admin.</p>
+                <?php endforeach; ?>
+            </div>
+            <script>
+                alert('One or more of your files have been rejected by the admin.');
+            </script>
+        <?php endif; ?>
+        <!-- Rest of your dashboard content -->
+    </div>
+
     <div class="container-fluid">
         <div class="row">
             <nav class="col-md-2 d-none d-md-block sidebar">
@@ -164,31 +216,31 @@ $approvedFiles = 0; // Example logic for approved files
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.php" style="color: white;">
-                                <img src="dashboard.png" width="20" height="20">
+                                <i class="bi bi-house-door"></i>
                                 My Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="StudentProfile.html" style="color: white;">
-                                <img src="studentprofile.png" width="20" height="20">
+                                <i class="bi bi-person"></i>
                                 Student Profile
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="uploaded-files.php" style="color: white;">
-                                <img src="uploadedfiles.png" width="20" height="20">
+                                <i class="bi bi-file-earmark"></i>
                                 Files
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="status_page.php" style="color: white;">
-                                <img src="status.png" width="20" height="20">
+                                <i class="bi bi-bar-chart"></i>
                                 Status
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php" style="color: white;">
-                                <img src="logout.png" width="20" height="20">
+                                <i class="bi bi-box-arrow-right"></i>
                                 Log out
                             </a>
                         </li>
@@ -254,15 +306,20 @@ $approvedFiles = 0; // Example logic for approved files
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($files as $file): ?>
-                            <?php $filePath = $userFolder . '/' . $file; ?>
+                        <?php if (!empty($files)): ?>
+                            <?php foreach ($files as $file): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($file['filename']); ?></td>
+                                    <td><?php echo htmlspecialchars($file['filetype']); ?></td>
+                                    <td><?php echo htmlspecialchars($file['filesize']); ?> KB</td>
+                                    <td><?php echo htmlspecialchars($file['upload_time']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($file); ?></td>
-                                <td><?php echo htmlspecialchars(pathinfo($filePath, PATHINFO_EXTENSION)); ?></td>
-                                <td><?php echo round(filesize($filePath) / 1024 / 1024, 2) . ' MB'; ?></td>
-                                <td><?php echo date("M d, Y", filemtime($filePath)); ?></td>
+                                <td colspan="4">No files found.</td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </main>
