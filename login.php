@@ -18,8 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if (password_verify($password, $hashed_password)) {
             // Password is correct, start a session
-            $_SESSION['username'] = $first_name;
+            session_regenerate_id(true); // Regenerate session ID to prevent session fixation attacks
+            $_SESSION['username'] = $email; // Set session to email
             $_SESSION['email'] = $email;
+            $_SESSION['first_name'] = $first_name; // Set session to first name
 
             header("Location: dashboard.php");
             exit();
