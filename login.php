@@ -20,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Password is correct, start a session
             session_regenerate_id(true); // Regenerate session ID to prevent session fixation attacks
             $_SESSION['username'] = $email; // Set session to email
-            $_SESSION['email'] = $email;
             $_SESSION['first_name'] = $first_name; // Set session to first name
 
             header("Location: dashboard.php");
