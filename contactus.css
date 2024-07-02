@@ -1,0 +1,48 @@
+body {
+    background-color: #135D66;
+}
+
+nav {
+    background-color: #003C43;
+}
+
+.container-fluid a {
+    color: #E3FEF7;
+}
+
+.container-fluid a:hover {
+    color: #557f7b;
+}
+
+footer {
+    background-color: #003C43;
+}
+footer li a{
+    text-decoration: none;
+    color: #E3FEF7;
+}
+
+/* Default styles for the Sign Up link */
+.nav-link.sign-up {
+    border: none;
+    background-color: transparent;
+}
+.loginform{
+    border: solid 5px #003C43;
+    border-radius: 20px;
+    color: #003C43;
+}
+
+/* Styles for the Sign Up link when the navbar is expanded */
+@media (min-width: 992px) {
+    .nav-link.sign-up {
+        border: 2px solid #ccc;
+        /* Example border */
+        background-color: #557f7b;
+        /* Example background color */
+        padding: 5px 10px;
+        /* Example padding */
+        border-radius: 5px;
+        /* Example border radius */
+    }
+}

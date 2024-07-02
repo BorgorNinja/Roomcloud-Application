@@ -1,0 +1,43 @@
+<?php
+session_start();
+include('db_connect.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    // Validate if passwords match
+    if ($new_password !== $confirm_password) {
+        die("New password and confirm password do not match.");
+    }
+
+    // Check if the user with this email exists
+    $stmt = $conn->prepare("SELECT new_password FROM logindata WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        // Hash the new password
+        $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+        // Update the password in the database-+9+
+        $update_stmt = $conn->prepare("UPDATE logindata SET new_password = ? WHERE email = ?");
+        $update_stmt->bind_param("ss", $hashed_new_password, $email);
+        if ($update_stmt->execute()) {
+            echo "Password updated successfully.";
+            header("Location: login.php");
+        } else {
+            echo "Error updating password: " . $update_stmt->error;
+        }
+    } else {
+        echo "User with this email does not exist.";
+    }
+
+    $stmt->close();
+    $update_stmt->close();
+}
+
+$conn->close();
+?>

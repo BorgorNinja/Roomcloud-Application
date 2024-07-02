@@ -18,8 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if (password_verify($password, $hashed_password)) {
             // Password is correct, start a session
-            $_SESSION['username'] = $first_name;
-            $_SESSION['email'] = $email;
+            session_regenerate_id(true); // Regenerate session ID to prevent session fixation attacks
+            $_SESSION['username'] = $email; // Set session to email
+            $_SESSION['first_name'] = $first_name; // Set session to first name
+
             header("Location: dashboard.php");
             exit();
         } else {
@@ -83,12 +85,12 @@ $conn->close();
                     
                     <button type="submit">Login</button>
                 </form>
-                <a href="#" class="forgot-password">Forgot Password?</a>
+                <a href="resetpass.html" class="forgot-password">Forgot Password?</a>
             </div>
         </main>
         <footer>
-            <a href="#">Contact Us</a>
-            <a href="#">Privacy Policy</a>
+            <a href="contactus.html">Contact Us</a>
+            <a href="privacy.html">Privacy Policy</a>
             <a href="#">Help Center</a>
             <p>All rights reserved© 2024</p>
         </footer>

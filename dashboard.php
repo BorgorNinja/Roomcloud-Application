@@ -9,20 +9,74 @@ if (!isset($_SESSION['username'])) {
 include 'db_connect.php';
 
 $username = $_SESSION['username'];
-$userFolder = 'uploads/' . $username;
 
-// Check if user folder exists, if not, create it
-if (!file_exists($userFolder)) {
-    mkdir($userFolder, 0777, true);
+// Fetch user information from logindata table (case-insensitive query)
+$query = "SELECT * FROM logindata WHERE LOWER(email) = LOWER(?)";
+$stmt = $conn->prepare($query);
+if ($stmt === false) {
+    die('Prepare failed: ' . htmlspecialchars($conn->error));
+}
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result === false) {
+    die('Execute failed: ' . htmlspecialchars($stmt->error));
+}
+$user = $result->fetch_assoc();
+$stmt->close();
+
+if ($user) {
+    $firstName = htmlspecialchars($user['first_name']);
+    $profilePicture = htmlspecialchars($user['profile_picture']) ?: 'https://via.placeholder.com/100';
+} else {
+    $firstName = 'N/A';
+    $profilePicture = 'https://via.placeholder.com/100';
 }
 
-$files = array_diff(scandir($userFolder), array('.', '..'));
+// Initialize counts
+$all_files_count = 0;
+$pending_files_count = 0;
+$approved_files_count = 0;
+$recent_files = [];
 
-$totalFiles = count($files);
-$pendingFiles = 0; // Example logic for pending files
-$approvedFiles = 0; // Example logic for approved files
+// Fetch counts for each status
+$query = "SELECT COUNT(*) as count, status FROM uploads WHERE username = ? GROUP BY status";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        switch ($row['status']) {
+            case 'pending':
+                $pending_files_count = $row['count'];
+                break;
+            case 'approved':
+                $approved_files_count = $row['count'];
+                break;
+            default:
+                $all_files_count += $row['count'];
+                break;
+        }
+    }
+}
+
+// Fetch recent files
+$query = "SELECT filename, filetype, filesize, upload_time, status FROM uploads WHERE username = ? ORDER BY upload_time DESC LIMIT 5";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        // Convert file size to MB
+        $row['filesize'] = number_format($row['filesize'] / 1048576, 2) . ' MB';
+        $recent_files[] = $row;
+    }
+}
+$stmt->close();
+$conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,10 +87,14 @@ $approvedFiles = 0; // Example logic for approved files
     <style>
         body {
             font-size: .875rem;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
         }
 
         main {
-            margin-top: 3rem;
+            margin-top: 0;
+            background-color: #f8f9fa;
         }
 
         .sidebar {
@@ -45,7 +103,7 @@ $approvedFiles = 0; // Example logic for approved files
             bottom: 0;
             left: 0;
             z-index: 100;
-            padding: 20px 0 0;
+            padding: 0;
             background-color: darkcyan;
             height: 100vh;
         }
@@ -113,12 +171,6 @@ $approvedFiles = 0; // Example logic for approved files
             box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
         }
 
-        .search-bar {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
         .profile-info {
             display: flex;
             align-items: center;
@@ -130,7 +182,7 @@ $approvedFiles = 0; // Example logic for approved files
         }
 
         .profile-info span {
-            margin-left: 10px;
+            margin-left: 2px;
             font-weight: bold;
         }
 
@@ -149,6 +201,45 @@ $approvedFiles = 0; // Example logic for approved files
 
         .welcome-card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: lightblue;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            margin-top: 20px;
+        }
+
+        .card-text {
+            margin-top: 0px;
+        }
+
+        .status-card {
+            border-radius: 10px;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-card h5 {
+            margin: 0;
+        }
+
+        .status-bar {
+            height: 10px;
+            background-color: white;
+            border-radius: 5px;
+        }
+
+        .table-shadow {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -159,118 +250,116 @@ $approvedFiles = 0; // Example logic for approved files
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item text-center">
-                            <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle;">
-                            <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
+                            <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle; padding-bottom: 5px;margin-right: -5px;margin-left: -8px;">
+                            <span style="font-size: 28px; font-family: Arial">ROOM | CLOUD</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="dashboard.php" style="color: white;">
-                                <img src="dashboard.png" width="20" height="20">
-                                My Dashboard
+                            <a class="nav-link active" href="dashboard.php" style="color: white;">
+                                <img src="/icon-files/without-bg/dashboard.png" width="20" height="20"> My Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="StudentProfile.html" style="color: white;">
-                                <img src="studentprofile.png" width="20" height="20">
-                                Student Profile
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="uploaded-files.php" style="color: white;">
-                                <img src="uploadedfiles.png" width="20" height="20">
-                                Files
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="Status1.html" style="color: white;">
-                                <img src="status.png" width="20" height="20">
-                                Status
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php" style="color: white;">
-                                <img src="logout.png" width="20" height="20">
-                                Log out
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+                        	<a class="nav-link" href="studentprofile.php" style="color: white;">
+                            <img src="/icon-files/without-bg/studentprofile.png" width="20" height="20"> Student Profile
+                        </a>
+                    </li>
 
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1>Dashboard</h1>
-                    <div class="profile-info">
-                        <img src="https://via.placeholder.com/100" class="rounded-circle mr-2" height="50px" width="50px" alt="Profile Picture">
-                        <span><?php echo htmlspecialchars($username); ?></span>
-                    </div>
-                </div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="uploaded-files.php" style="color: white;">
+                            <img src="/icon-files/without-bg/files.png" width="20" height="20"> Uploaded Files
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="status1.php" style="color: white;">
+                            <img src="/icon-files/without-bg/status.png" width="20" height="20"> Status
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php" style="color: white;">
+                            <img src="/icon-files/without-bg/logout.png" width="20" height="20"> Log out
+                        </a>
+                    </li>
 
-                <div class="card mb-4 welcome-card">
-                    <div class="card-body">
-                        <h2 class="card-title">Welcome Back, <?php echo htmlspecialchars($username); ?>!</h2>
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                <h1 style="font-family: Arial;">Dashboard</h1>
+
+                <div class="profile-info">
+                    <span><?php echo htmlspecialchars($firstName); ?></span>
+                    <img src="<?php echo $profilePicture; ?>" class="rounded-circle ml-2" height="40px" width="40px" alt="Profile Picture" padding-left="0px;">
+                </div>
+            </div>
+
+            <div class="card mb-4 welcome-card">
+                <div class="card-body d-flex align-items-center">
+                    <div style="margin-top: -20px">
+                        <h2 class="card-title" style="font-family: Calibri;">Welcome Back, <?php echo htmlspecialchars($firstName); ?>!</h2>
                         <p class="card-text">Check and update your dashboard!</p>
                     </div>
+                    <img src="/icon-files/without-bg/thesis.png" alt="Welcome Image" class="ml-auto" style="width: 170px; height: 170px; padding-top: 0px;">
                 </div>
+            </div>
 
-                <h3>Status</h3>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <div class="card text-white bg-danger mb-3">
-                            <div class="card-header">All</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Upload Today (<?php echo $totalFiles; ?> Files)</h5>
-                                <p class="card-text">Total files: <?php echo $totalFiles; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-warning mb-3">
-                            <div class="card-header">Pending</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Upload Today (<?php echo $pendingFiles; ?> Files)</h5>
-                                <p class="card-text">Pending files: <?php echo $pendingFiles; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-primary mb-3">
-                            <div class="card-header">Approved</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Upload Today (<?php echo $approvedFiles; ?> Files)</h5>
-                                <p class="card-text">Approved files: <?php echo $approvedFiles; ?></p>
-                            </div>
-                        </div>
+            <h4 style="font-family: Arial;">Status</h4>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="status-card bg-danger card-shadow">
+                        <h5>All</h5>
+                        <p>Upload Today (<?php echo $all_files_count; ?> Files)</p>
+                        <div class="status-bar"></div>
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="status-card bg-warning card-shadow">
+                        <h5>Pending</h5>
+                        <p>Pending Today (<?php echo $pending_files_count; ?> Files)</p>
+                        <div class="status-bar"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="status-card bg-primary card-shadow">
+                        <h5>Approved</h5>
+                        <p>Approved Today (<?php echo $approved_files_count; ?> Files)</p>
+                        <div class="status-bar"></div>
+                    </div>
+                </div>
+            </div>
 
-                <h3>Recent Files</h3>
+            <h4 style="font-family: Arial;">Recent Files</h4>
+            <div class="table-responsive table-shadow">
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>File Name</th>
+                            <th>File</th>
                             <th>Type</th>
                             <th>Size</th>
-                            <th>Last Modified</th>
+                            <th>Date</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($files as $file): ?>
-                            <?php $filePath = $userFolder . '/' . $file; ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($file); ?></td>
-                                <td><?php echo htmlspecialchars(pathinfo($filePath, PATHINFO_EXTENSION)); ?></td>
-                                <td><?php echo round(filesize($filePath) / 1024 / 1024, 2) . ' MB'; ?></td>
-                                <td><?php echo date("M d, Y", filemtime($filePath)); ?></td>
-                            </tr>
+                        <?php foreach ($recent_files as $file): ?>
+                        <tr>
+                            <td style="font-family: times new roman;"><?php echo htmlspecialchars($file['filename']); ?></td>
+                            <td style="font-family: times new roman;"><?php echo htmlspecialchars($file['filetype']); ?></td>
+                            <td style="font-family: times new roman;"><?php echo htmlspecialchars($file['filesize']); ?></td>
+                            <td style="font-family: times new roman;"><?php echo htmlspecialchars($file['upload_time']); ?></td>
+                            <td style="font-family: times new roman;"><?php echo htmlspecialchars($file['status']); ?></td>
+                        </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
