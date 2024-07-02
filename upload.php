@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['fileToUpload'])) {
             bottom: 0;
             left: 0;
             z-index: 100;
-            padding: 20px 0 0;
+            padding: 0;
             background-color: darkcyan;
             height: 100vh;
         }
@@ -128,12 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['fileToUpload'])) {
             box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
         }
 
-        .search-bar {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
         .profile-info {
             display: flex;
             align-items: center;
@@ -174,31 +168,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['fileToUpload'])) {
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item text-center">
-                        <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle;">
-                        <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
+                        <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle; padding-bottom: 5px;margin-right: -5px;margin-left: -8px;">
+                        <span style="font-size: 28px; font-family: Arial">ROOM | CLOUD</span>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="dashboard.php">
-                            <span data-feather="home"></span>
-                            Dashboard
+                            <img src="/icon-files/without-bg/dashboard.png" width="20" height="20"> My Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="studentprofile.php">
+                            <img src="/icon-files/without-bg/studentprofile.png" width="20" height="20"> Student Profile
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="uploaded-files.php">
-                            <span data-feather="file"></span>
-                            Uploaded Files
+                            <img src="/icon-files/without-bg/files.png" width="20" height="20"> Uploaded Files
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="upload.php">
-                            <span data-feather="upload"></span>
-                            Upload
+                            <img src="/icon-files/without-bg/upload.png" width="20" height="20"> Upload
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="status1.php">
+                            <img src="/icon-files/without-bg/status.png" width="20" height="20"> Status
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="logout.php">
-                            <span data-feather="log-out"></span>
-                            Logout
+                            <img src="/icon-files/without-bg/logout.png" width="20" height="20"> Log out
                         </a>
                     </li>
                 </ul>

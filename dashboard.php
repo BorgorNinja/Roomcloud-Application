@@ -248,32 +248,37 @@ $conn->close();
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item text-center">
-                            <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle; padding-bottom: 5px;">
-                            <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
+                            <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle; padding-bottom: 5px;margin-right: -5px;margin-left: -8px;">
+                            <span style="font-size: 28px; font-family: Arial">ROOM | CLOUD</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="dashboard.php" style="color: white;">
-                                <img src="dashboard.png" width="20" height="20"> My Dashboard
+                            <a class="nav-link active" href="dashboard.php">
+                                <img src="/icon-files/without-bg/dashboard.png" width="20" height="20"> My Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="studentprofile.php" style="color: white;">
-                                <img src="studentprofile.png" width="20" height="20"> Student Profile
+                            <a class="nav-link" href="studentprofile.php">
+                                <img src="/icon-files/without-bg/studentprofile.png" width="20" height="20"> Student Profile
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="upload.php" style="color: white;">
-                                <img src="uploadedfiles.png" width="20" height="20"> Files
+                            <a class="nav-link" href="uploaded-files.php">
+                                <img src="/icon-files/without-bg/files.png" width="20" height="20"> Uploaded Files
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="status1.php" style="color: white;">
-                                <img src="status.png" width="20" height="20"> Status
+                            <a class="nav-link" href="upload.php">
+                                <img src="/icon-files/without-bg/upload.png" width="20" height="20"> Upload
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="logout.php" style="color: white;">
-                                <img src="logout.png" width="20" height="20"> Log out
+                            <a class="nav-link" href="status1.php">
+                                <img src="/icon-files/without-bg/status.png" width="20" height="20"> Status
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">
+                                <img src="/icon-files/without-bg/logout.png" width="20" height="20"> Log out
                             </a>
                         </li>
                     </ul>
@@ -296,7 +301,7 @@ $conn->close();
                             <h2 class="card-title" style="font-family: Calibri;">Welcome Back, <?php echo htmlspecialchars($firstName); ?>!</h2>
                             <p class="card-text">Check and update your dashboard!</p>
                         </div>
-                        <img src="thesis.png" alt="Welcome Image" class="ml-auto" style="width: 200px; height: 150px; padding-top: 0px;">
+                        <img src="/icon-files/without-bg/thesis.png" alt="Welcome Image" class="ml-auto" style="width: 170px; height: 170px; padding-top: 0px;">
                     </div>
                 </div>
 

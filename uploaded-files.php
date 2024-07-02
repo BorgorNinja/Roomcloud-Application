@@ -30,6 +30,7 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
     <style>
         body {
             font-size: .875rem;
+            background-color: #f8f9fa;
         }
 
         main {
@@ -42,7 +43,7 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
             bottom: 0;
             left: 0;
             z-index: 100;
-            padding: 20px 0 0;
+            padding: 0;
             background-color: darkcyan;
             height: 100vh;
         }
@@ -110,12 +111,6 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
             box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
         }
 
-        .search-bar {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
         .profile-info {
             display: flex;
             align-items: center;
@@ -127,7 +122,7 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
         }
 
         .profile-info span {
-            margin-left: 10px;
+            margin-left: 2px;
             font-weight: bold;
         }
 
@@ -144,8 +139,12 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
             background-color: #a0cfcf;
         }
 
-        .welcome-card {
+        .table-shadow {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         .three-dots-menu {
@@ -195,31 +194,37 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item text-center">
-                            <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle;">
-                            <span style="font-size: 25px; font-family: Roboto;">ROOM | CLOUD</span>
+                            <img src="roomcloudlogo.png" alt="Logo" class="sidebar-logo" style="width: 40px; height: auto; vertical-align: middle; padding-bottom: 5px; margin-right: -5px; margin-left: -8px;">
+                            <span style="font-size: 28px; font-family: Arial">ROOM | CLOUD</span>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
-                                <i class="bi bi-house-door"></i>
-                                Dashboard
+                                <img src="/icon-files/without-bg/dashboard.png" width="20" height="20"> My Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="uploaded-files.php">
-                                <i class="bi bi-file-earmark"></i>
-                                Uploaded Files
+                                <img src="/icon-files/without-bg/files.png" width="20" height="20"> Uploaded Files
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="upload.php">
-                                <i class="bi bi-upload"></i>
-                                Upload
+                                <img src="/icon-files/without-bg/upload.png" width="20" height="20"> Upload
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="status1.php">
+                                <img src="/icon-files/without-bg/status.png" width="20" height="20"> Status
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="studentprofile.php">
+                                <img src="/icon-files/without-bg/studentprofile.png" width="20" height="20"> Student Profile
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php">
-                                <i class="bi bi-box-arrow-right"></i>
-                                Logout
+                                <img src="/icon-files/without-bg/logout.png" width="20" height="20"> Log out
                             </a>
                         </li>
                     </ul>
@@ -235,8 +240,8 @@ $files = $result->fetch_all(MYSQLI_ASSOC);
                     <span>Welcome, <?php echo htmlspecialchars($username); ?>!</span>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-striped table-sm">
+                <div class="table-responsive table-shadow">
+                    <table class="table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>File Name</th>
