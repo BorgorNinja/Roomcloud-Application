@@ -15,8 +15,7 @@ $createLoginDataTable = "CREATE TABLE IF NOT EXISTS logindata (
     section VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     contact_number VARCHAR(20) NOT NULL,
-    new_password VARCHAR(255) NOT NULL,
-    confirm_password VARCHAR(255) NOT NULL
+    new_password VARCHAR(255) NOT NULL
 )";
 if ($conn->query($createLoginDataTable) === TRUE) {
     echo "Table logindata created successfully\n";
