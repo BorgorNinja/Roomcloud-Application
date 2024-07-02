@@ -9,6 +9,7 @@ if (!isset($_SESSION['username'])) {
 include 'db_connect.php';
 
 $username = $_SESSION['username'];
+$profilePicturePath = "uploads/profile_pictures/$username.jpg"; // Path to save profile pictures
 
 // Verify database connection
 if ($conn->connect_error) {
@@ -62,6 +63,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     }
     $student = $result->fetch_assoc();
     $stmt->close();
+}
+
+// Handle profile picture upload
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['profile_picture'])) {
+    $targetDir = "uploads/profile_pictures/";
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
+
+    $targetFile = $targetDir . basename($_FILES['profile_picture']['name']);
+    $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+    $newFileName = $username . '.' . $imageFileType;
+
+    // Check if image file is a actual image or fake image
+    $check = getimagesize($_FILES['profile_picture']['tmp_name']);
+    if ($check !== false) {
+        // Allow certain file formats
+        if (in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+            if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $targetDir . $newFileName)) {
+                // Resize image to 100x100
+                $imageResource = null;
+                switch ($imageFileType) {
+                    case 'jpg':
+                    case 'jpeg':
+                        $imageResource = imagecreatefromjpeg($targetDir . $newFileName);
+                        break;
+                    case 'png':
+                        $imageResource = imagecreatefrompng($targetDir . $newFileName);
+                        break;
+                    case 'gif':
+                        $imageResource = imagecreatefromgif($targetDir . $newFileName);
+                        break;
+                }
+                if ($imageResource) {
+                    $resizedImage = imagescale($imageResource, 100, 100);
+                    switch ($imageFileType) {
+                        case 'jpg':
+                        case 'jpeg':
+                            imagejpeg($resizedImage, $targetDir . $newFileName);
+                            break;
+                        case 'png':
+                            imagepng($resizedImage, $targetDir . $newFileName);
+                            break;
+                        case 'gif':
+                            imagegif($resizedImage, $targetDir . $newFileName);
+                            break;
+                    }
+                    imagedestroy($imageResource);
+                    imagedestroy($resizedImage);
+                }
+                $profilePicturePath = $targetDir . $newFileName;
+            }
+        }
+    }
 }
 $conn->close();
 
@@ -326,13 +381,17 @@ if ($student) {
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="profile-info">
-                                <img src="https://via.placeholder.com/100" class="rounded-circle" height="100px" width="100px" alt="Profile Picture">
+                                <img src="<?php echo file_exists($profilePicturePath) ? $profilePicturePath : 'https://via.placeholder.com/100'; ?>" class="rounded-circle" height="100px" width="100px" alt="Profile Picture">
                                 <div class="moved-slightly-right">
                                     <h3 id="student-name"><?php echo $fullName; ?></h3>
                                     <p id="student-id"><?php echo $studentId; ?></p>
                                     <p id="student-email"><?php echo $email; ?></p>
                                 </div>
                                 <button class="btn btn-primary ml-auto" onclick="showEditForm()">Edit</button>
+                                <form action="studentprofile.php" method="POST" enctype="multipart/form-data" style="margin-left: 20px;">
+                                    <input type="file" name="profile_picture" accept="image/*" class="form-control-file">
+                                    <button type="submit" class="btn btn-secondary mt-2">Change Profile Picture</button>
+                                </form>
                             </div>
                         </div>
                     </div>
